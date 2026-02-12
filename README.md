@@ -1,10 +1,10 @@
 # SynthSAEBench
 
-This repo contains anonymized code for the paper "SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data".
+This repo contains code for the paper "SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data".
 
 ## Structure
 
-The main codebase is in the `synth_sae_bench` package. Experiments for the paper are in the `experiments` directory. The weights for the `synth-sae-bench-16k` benchmark model are in the `synth-sae-bench-16k` directory.
+Experiments for the paper are in the `experiments` directory. The extended SAE classes used in the paper (`XStandardTrainingSAE` and `XJumpReLUTrainingSAE` containing L0 autotuning) are in the `saes` directory.
 
 ## Setup
 
@@ -24,12 +24,12 @@ uv run experiments/sweeps/sweep_superposition.py
 
 ## Loading the benchmark model
 
-The main benchmark model is the `synth-sae-bench-16k` model. It is stored in the `synth-sae-bench-16k` directory. To load the model, run:
+The main benchmark model is on Huggingface at [decoderesearch/synth-sae-bench-16k-v1](https://huggingface.co/decoderesearch/synth-sae-bench-16k-v1). To load the model, run:
 
 ```bash
 from sae_lens.synthetic.synthetic_model import SyntheticModel
 
-model = SyntheticModel.from_pretrained("synth-sae-bench-16k")
+model = SyntheticModel.from_pretrained("decoderesearch/synth-sae-bench-16k-v1")
 ```
 
 ## Development
