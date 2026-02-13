@@ -1,14 +1,10 @@
 [project]
-name = "synth-sae-bench"
+name = "synth-sae-bench-experiments"
 version = "0.1.0"
 description = "Experiments for the paper 'SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data'"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["sae-lens>=6.36.2"]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+dependencies = ["sae-lens>=6.37.0"]
 
 [dependency-groups]
 dev = ["kaleido>=1.2.0", "pyright>=1.1.408", "pytest>=9.0.2", "ruff>=0.14.14"]

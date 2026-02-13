@@ -95,7 +95,7 @@ def get_btk_config(d_in: int, d_sae: int, k: int) -> BatchTopKTrainingSAEConfig:
 
 
 def get_matryoshka_config(
-    d_in: int, d_sae: int, k: int
+    d_in: int, d_sae: int, k: int, use_matryoshka_aux_loss: bool = True
 ) -> MatryoshkaBatchTopKTrainingSAEConfig:
     """Get Matryoshka BatchTopK SAE configuration.
 
@@ -107,6 +107,7 @@ def get_matryoshka_config(
         d_in=d_in,
         d_sae=d_sae,
         matryoshka_widths=widths,
+        use_matryoshka_aux_loss=use_matryoshka_aux_loss,
     )
 
 

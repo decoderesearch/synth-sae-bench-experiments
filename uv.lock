@@ -2135,7 +2135,7 @@ wheels = [
 
 [[package]]
 name = "sae-lens"
-version = "6.36.2"
+version = "6.37.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "babe" },
@@ -2152,9 +2152,9 @@ dependencies = [
     { name = "transformers" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/74/4b/7fc2fd7708cc65b3f439cd557f04628249c276cfb47874d6f1df7cfa2f0e/sae_lens-6.36.2.tar.gz", hash = "sha256:2a3be0fac25073aaa4d144913c2a9235d61c7d666ee94158d936612f64ed315b", size = 253090, upload-time = "2026-02-11T14:26:13.044Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/eb/a14b8ccb2abba3d2abb2bdc75f16b7a2ef3ad68c6b54296a2ae278121844/sae_lens-6.37.0.tar.gz", hash = "sha256:b7f7e668683fb74285052b0a2f01d848fd2e827324e784f684035da30401bc25", size = 253954, upload-time = "2026-02-13T13:36:56.566Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/a0/bf9c1ab3ebd6c6eb03fb6d6ac797e5a512b94965959e204e160a44d2ee04/sae_lens-6.36.2-py3-none-any.whl", hash = "sha256:b72d950bbdba29c5e5d50af1c5efbf4168fa1e38b495045c86b8500a5a56f95d", size = 287024, upload-time = "2026-02-11T14:26:11.082Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/07/48c671fdb92eb1b0b120bb677cba3c5ec467dd6ae8fae5e18a1bd792f2ea/sae_lens-6.37.0-py3-none-any.whl", hash = "sha256:7e231f9c1e670415dde64dbc7ac5093526c7885811f92c1f7b51469be04414ec", size = 287943, upload-time = "2026-02-13T13:36:54.696Z" },
 ]
 
 [[package]]
@@ -2461,9 +2461,9 @@ wheels = [
 ]
 
 [[package]]
-name = "synth-sae-bench"
+name = "synth-sae-bench-experiments"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "sae-lens" },
 ]
@@ -2477,7 +2477,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sae-lens", specifier = ">=6.36.2" }]
+requires-dist = [{ name = "sae-lens", specifier = ">=6.37.0" }]
 
 [package.metadata.requires-dev]
 dev = [
