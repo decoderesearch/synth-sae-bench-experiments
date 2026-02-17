@@ -1,6 +1,8 @@
 # SynthSAEBench
 
-This repo contains code for the paper "SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data".
+This repo contains code for the paper: [SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data](https://arxiv.org/abs/2602.14687). 
+
+Trained SAEs and results are online at [https://huggingface.co/decoderesearch/synth-sae-bench-16k-v1-saes](https://huggingface.co/decoderesearch/synth-sae-bench-16k-v1-saes).
 
 ## Structure
 
