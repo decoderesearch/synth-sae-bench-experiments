@@ -1,13 +1,23 @@
 cff-version: 1.2.0                                                                                                                                           
 message: "If you use SynthSAEBench, please cite this paper."                                                                                                 
 title: "SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data"                                                                  
-type: article                                                                                                                                              
-authors:
+authors:                                                                                                                                                     
   - family-names: Chanin
     given-names: David
   - family-names: Garriga-Alonso
-    given-names: Adrià
+    given-names: "Adrià"
 identifiers:
   - type: url
     value: "https://arxiv.org/abs/2602.14687"
 date-released: 2026-02-16
+preferred-citation:
+  type: article
+  title: "SynthSAEBench: Evaluating Sparse Autoencoders on Scalable Realistic Synthetic Data"
+  authors:
+    - family-names: Chanin
+      given-names: David
+    - family-names: Garriga-Alonso
+      given-names: "Adrià"
+  journal: "arXiv preprint arXiv:2602.14687"
+  year: 2026
+  url: "https://arxiv.org/abs/2602.14687"
