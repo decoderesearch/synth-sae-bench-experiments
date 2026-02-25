@@ -8,7 +8,7 @@ from sae_lens import (
 )
 from sae_lens.saes.jumprelu_sae import Step, calculate_pre_act_loss
 from sae_lens.saes.sae import TrainStepInput, TrainStepOutput
-from sae_lens.saes.topk_sae import _calculate_topk_aux_acts
+from sae_lens.saes.topk_sae import calculate_topk_aux_acts
 from typing_extensions import override
 
 from saes.components.coefficient_autotuner import (
@@ -194,7 +194,7 @@ class XJumpReLUTrainingSAE(JumpReLUTrainingSAE):
         scale = min(num_dead / k_aux, 1.0)
         k_aux = min(k_aux, num_dead)
 
-        auxk_acts = _calculate_topk_aux_acts(
+        auxk_acts = calculate_topk_aux_acts(
             k_aux=k_aux,
             hidden_pre=hidden_pre,
             dead_neuron_mask=dead_neuron_mask,
