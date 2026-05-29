@@ -9,6 +9,9 @@ dependencies = ["sae-lens>=6.37.0"]
 [dependency-groups]
 dev = ["kaleido>=1.2.0", "pyright>=1.1.408", "pytest>=9.0.2", "ruff>=0.14.14"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [tool.ruff.lint]
 exclude = ["*.ipynb"]
 ignore = ["E203", "E501", "E731", "F722", "E741", "F821", "F403", "ARG002"]

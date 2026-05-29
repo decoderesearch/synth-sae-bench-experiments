@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 import torch
 from sae_lens import (
@@ -84,6 +85,18 @@ class XJumpReLUTrainingSAE(JumpReLUTrainingSAE):
             )
         else:
             self.coefficient_autotuner = None
+
+    @override
+    def process_state_dict_for_saving_inference(
+        self, state_dict: dict[str, Any]
+    ) -> None:
+        # The coefficient autotuner is a training-only submodule. Keep its
+        # buffers in training checkpoints (so training can resume), but strip
+        # them from the inference weights so they load cleanly into a vanilla
+        # SAELens inference SAE, which has no such submodule.
+        super().process_state_dict_for_saving_inference(state_dict)
+        for key in [k for k in state_dict if k.startswith("coefficient_autotuner.")]:
+            del state_dict[key]
 
     @override
     def training_forward_pass(self, step_input: TrainStepInput) -> TrainStepOutput:

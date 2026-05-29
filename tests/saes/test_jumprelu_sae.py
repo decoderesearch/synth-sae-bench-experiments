@@ -1,7 +1,9 @@
 from pathlib import Path
 
 import torch
+from sae_lens import SAE, JumpReLUSAE
 from sae_lens.saes.sae import TrainStepInput
+from safetensors import safe_open
 
 from saes.jumprelu_sae import (
     XJumpReLUTrainingSAE,
@@ -155,6 +157,81 @@ def test_XJumpReLUTrainingSAE_autotuner_state_persists_in_state_dict(tmp_path: P
     assert new_sae.coefficient_autotuner is not None
     assert abs(new_sae.coefficient_autotuner.multiplier - original_multiplier) < 1e-10
     assert abs(new_sae.coefficient_autotuner.smoothed_l0 - original_smoothed_l0) < 1e-10
+
+
+def test_XJumpReLUTrainingSAE_save_inference_model_excludes_autotuner(
+    tmp_path: Path,
+):
+    """Saved inference weights must not contain coefficient_autotuner keys, so
+    they load cleanly into a vanilla SAELens JumpReLUSAE."""
+    cfg = build_sae_cfg(
+        sae_cfg_cls=XJumpReLUTrainingSAEConfig,
+        d_in=64,
+        d_sae=128,
+        autotune_target_l0=50.0,
+        l0_coefficient=1.0,
+    )
+    sae = XJumpReLUTrainingSAE(cfg)
+    assert sae.coefficient_autotuner is not None
+
+    sae.save_inference_model(tmp_path)
+
+    with safe_open(tmp_path / "sae_weights.safetensors", framework="pt") as f:
+        keys = list(f.keys())
+    assert not any(k.startswith("coefficient_autotuner") for k in keys), keys
+
+    # Should load into a plain SAELens inference SAE without error.
+    JumpReLUSAE.load_from_disk(tmp_path)
+
+
+def test_XJumpReLUTrainingSAE_saved_inference_model_loads_as_jumprelu_sae(
+    tmp_path: Path,
+):
+    """The saved inference model loads via the base SAE class as a plain
+    SAELens JumpReLUSAE (not the X training variant) and produces matching
+    output."""
+    cfg = build_sae_cfg(
+        sae_cfg_cls=XJumpReLUTrainingSAEConfig,
+        d_in=64,
+        d_sae=128,
+        autotune_target_l0=50.0,
+        l0_coefficient=1.0,
+    )
+    sae = XJumpReLUTrainingSAE(cfg)
+
+    sae.save_inference_model(tmp_path)
+
+    loaded = SAE.load_from_disk(tmp_path)
+
+    # Loads as the standard SAELens inference class, not the X training variant.
+    assert type(loaded) is JumpReLUSAE
+    assert not isinstance(loaded, XJumpReLUTrainingSAE)
+    assert loaded.cfg.architecture() == "jumprelu"
+
+    # Inference output should match the training SAE's encode/decode.
+    test_input = torch.randn(8, 64)
+    expected = sae.decode(sae.encode(test_input))
+    actual = loaded.decode(loaded.encode(test_input))
+    assert torch.allclose(actual, expected, atol=1e-6)
+
+
+def test_XJumpReLUTrainingSAE_save_model_keeps_autotuner(tmp_path: Path):
+    """save_model (training checkpoint) must keep autotuner keys so training
+    can resume from the checkpoint."""
+    cfg = build_sae_cfg(
+        sae_cfg_cls=XJumpReLUTrainingSAEConfig,
+        d_in=64,
+        d_sae=128,
+        autotune_target_l0=50.0,
+        l0_coefficient=1.0,
+    )
+    sae = XJumpReLUTrainingSAE(cfg)
+
+    sae.save_model(tmp_path)
+
+    with safe_open(tmp_path / "sae_weights.safetensors", framework="pt") as f:
+        keys = list(f.keys())
+    assert any(k.startswith("coefficient_autotuner") for k in keys), keys
 
 
 def test_XJumpReLUTrainingSAE_config_get_autotuner_config():
