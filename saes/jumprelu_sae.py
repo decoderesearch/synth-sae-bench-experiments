@@ -8,7 +8,6 @@ from sae_lens import (
 )
 from sae_lens.saes.jumprelu_sae import Step, calculate_pre_act_loss
 from sae_lens.saes.sae import TrainStepInput, TrainStepOutput
-from sae_lens.saes.topk_sae import calculate_topk_aux_acts
 from typing_extensions import override
 
 from saes.components.coefficient_autotuner import (
@@ -26,9 +25,6 @@ class XJumpReLUTrainingSAEConfig(JumpReLUTrainingSAEConfig):
     - A multiplier is autotuned during training to reach the target L0.
     - The effective coefficient is: l0_coefficient * multiplier
     """
-
-    # set to non-None to enable topk auxiliary loss
-    topk_aux_loss_coefficient: float | None = None
 
     # autotuning
     autotune_target_l0: float | None = None
@@ -157,53 +153,4 @@ class XJumpReLUTrainingSAE(JumpReLUTrainingSAE):
                 W_dec_norm,
             )
 
-        if self.cfg.topk_aux_loss_coefficient is not None:
-            losses["topk_aux_loss"] = self.calculate_topk_aux_loss(
-                sae_in=step_input.sae_in,
-                sae_out=sae_out,
-                hidden_pre=hidden_pre,
-                dead_neuron_mask=step_input.dead_neuron_mask,
-            )
-
         return losses
-
-    def calculate_topk_aux_loss(
-        self,
-        sae_in: torch.Tensor,
-        sae_out: torch.Tensor,
-        hidden_pre: torch.Tensor,
-        dead_neuron_mask: torch.Tensor | None,
-    ) -> torch.Tensor:
-        """
-        Calculate TopK auxiliary loss.
-
-        This auxiliary loss encourages dead neurons to learn useful features by having
-        them reconstruct the residual error from the live neurons. It's a key part of
-        preventing neuron death in TopK SAEs.
-        """
-        # Mostly taken from https://github.com/EleutherAI/sae/blob/main/sae/sae.py, except without variance normalization
-        # NOTE: checking the number of dead neurons will force a GPU sync, so performance can likely be improved here
-        if dead_neuron_mask is None or (num_dead := int(dead_neuron_mask.sum())) == 0:
-            return sae_out.new_tensor(0.0)
-        residual = (sae_in - sae_out).detach()
-
-        # Heuristic from Appendix B.1 in the paper
-        k_aux = sae_in.shape[-1] // 2
-
-        # Reduce the scale of the loss if there are a small number of dead latents
-        scale = min(num_dead / k_aux, 1.0)
-        k_aux = min(k_aux, num_dead)
-
-        auxk_acts = calculate_topk_aux_acts(
-            k_aux=k_aux,
-            hidden_pre=hidden_pre,
-            dead_neuron_mask=dead_neuron_mask,
-        )
-
-        # Encourage the top ~50% of dead latents to predict the residual of the
-        # top k living latents
-        recons = self.decode(auxk_acts)
-        auxk_loss = (recons - residual).pow(2).sum(dim=-1).mean()
-
-        assert self.cfg.topk_aux_loss_coefficient is not None
-        return self.cfg.topk_aux_loss_coefficient * scale * auxk_loss

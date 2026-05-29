@@ -147,22 +147,20 @@ def get_jumprelu_config(
     d_in: int,
     d_sae: int,
     target_l0: float,
-    use_topk_aux_loss: bool = True,
 ) -> XJumpReLUTrainingSAEConfig:
     """Get JumpReLU SAE configuration."""
     return XJumpReLUTrainingSAEConfig(
         d_in=d_in,
         d_sae=d_sae,
         normalize_activations="expected_average_only_in",
-        jumprelu_sparsity_loss_mode="tanh",
-        jumprelu_tanh_scale=4.0,  # default 4
-        jumprelu_bandwidth=2,  # default 2
-        jumprelu_init_threshold=0.5,  # default 0.1
-        pre_act_loss_coefficient=None if use_topk_aux_loss else 3e-6,
-        topk_aux_loss_coefficient=1.0 if use_topk_aux_loss else None,
+        jumprelu_sparsity_loss_mode="step",
+        jumprelu_bandwidth=1.0,
+        jumprelu_init_threshold=1.0,
+        jumprelu_tanh_scale=4.0,  # unused for step mode
+        pre_act_loss_coefficient=None,
         decoder_init_norm=0.5,
         # autotuning
-        l0_coefficient=0.2,
+        l0_coefficient=1.0,
         l0_warm_up_steps=0,
         autotune_target_l0=target_l0,
         autotune_start_step=0,
